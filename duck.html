@@ -285,11 +285,17 @@ function startGame() {
     if (gameStarted) return;
 
     gameStarted = true;
+<<<<<<< HEAD
 
     if (duckMusic) {
         duckMusic.play().catch(() => {});
     }
 
+=======
+    if (duckMusic) {
+        duckMusic.play().catch(() => {});
+    }
+>>>>>>> f39d6ea907118a609acd7cc49a335ec900d83ea6
     timer = setInterval(() => {
 
         if (gameOver) return;
