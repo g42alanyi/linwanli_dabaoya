@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>林婉麗! 生日快樂 🎂</title>
+
+<!-- 字體（好看但可讀） -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+/* 定義字體 */
+@font-face {
+    font-family: 'azuki'; /* 你自己取名字 */
+    src: url('/fonts/azuki.ttf') format('truetype');
+}
+/* ===== 背景 ===== */
+body {
+    margin: 0;
+    text-align: center;
+    background: linear-gradient(135deg, #ffe6f0, #e6f7ff);
+    font-family: 'Poppins', 'Microsoft JhengHei', sans-serif;
+}
+
+/* ===== 信封 ===== */
+
+/*
+#envelope {
+    width: 90%;
+    max-width:520px;
+    aspect-ratio: 5/3;
+    margin: 50px auto;
+    /*
+    width: 60%;
+    max-width: 280px;
+    margin-top: 120px;
+    
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+*/
+
+#envelope:hover {
+    transform: scale(1.1);
+}
+
+#stage {
+    position: relative;
+    width: 90%;
+    max-width: 520px;
+    aspect-ratio: 5/3;
+    margin: 50px auto;
+}
+
+/* ===== 卡片 ===== */
+
+
+/*
+
+#envelope{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    max-width: 520px;
+    /*
+    aspect-ratio: 5/3;
+    */
+    /*
+    height:auto;
+    margin: 50px auto;
+    
+    background-size: contain; 
+    background-repeat: no-repeat; /*超出不重複背景圖*/
+    /*background-position: center;
+
+    border-radius: 20px;
+    padding: 20px;
+    overflow: hidden; /* ⭐ 防止爆出去 */
+    /*cursor: pointer;
+}*/
+
+#envelope {
+    width: 90%;
+    max-width: 520px;
+    margin: 50px auto;
+    cursor: pointer;
+}
+
+
+#card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 90%;
+    max-width: 520px;
+    
+    aspect-ratio: auto;
+    min-height: 500px;
+    
+    margin: 50px auto;
+    
+    background-image: url("/images/envelope2.png");
+    background-size: contain; /**/
+    background-repeat: no-repeat; /*超出不重複背景圖*/
+    background-position: center;
+
+    border-radius: 20px;
+    padding: 20px;
+    overflow: hidden; /* ⭐ 防止爆出去 */
+    cursor: pointer;
+}
+
+
+/* 卡片翻開 */
+#card.show {
+    transform: rotateY(0deg);
+}
+
+/* 文字 */
+#text {
+    position: absolute;
+
+    top: 30%;              /* ⭐垂直百分比控制 */
+    left: 65%;             /* 水平置中基準 */
+
+    transform: translateX(-50%); /* ⭐只水平置中 */
+
+    width: 80%;
+    text-align: left;
+
+    font-family: 'uzura', 'Microsoft JhengHei', sans-serif;
+    font-size: 20px;
+    line-height: 1.6;
+
+    color: white;
+    text-shadow: 2px 2px 6px black;
+
+    max-height: 60%;
+    overflow-y: auto;
+
+}
+
+/* 強調文字 */
+.big {
+    font-size: 25px;
+    color: gold;
+    font-weight: bolder;
+    text-shadow: 2px 2px 7px black;
+}
+
+/* 按鈕 */
+button {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.btn-open {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-open button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    transition: transform 0.1s ease;
+}
+
+.btn-open img {
+    width: 120px;
+    display: block;
+}
+
+.btn-open button:hover {
+    transform: scale(1.05);
+}
+
+
+.btn-group {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 50px;
+
+    opacity: 0;
+    transition: all 0.5s ease;
+
+    pointer-events: none;
+}
+
+button img {
+    width: 130px;
+    display: block;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-group button:hover {
+    transform: scale(1.05);
+}
+
+.btn-group.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/*
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+*/
+
+</style>
+</head>
+
+<body>
+
+<h1>🎂 快打開鴨 🎂</h1>
+<div id="stage">
+    <!-- 改成只有一個card
+    <img id="envelope" src="/images/envelope.png" onclick="openEnvelope()">
+    -->
+    <!-- 卡片 -->
+    <div id="card">
+        <button onclick="toggleBGM()" id="musicBtn">🔊</button>
+        <div class="btn-open">
+            <button onclick="openEnvelope()"">
+                <img src="/images/open.png">
+            </button>
+        </div>
+        <div id="text"></div>
+
+        <br>
+        <div class="btn-group">
+            <button onclick="playMusic()">
+                <img src="/images/button-song.png">
+            </button>
+            <button onclick="goDuck()">
+                <img src="/images/button-hit.png">
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 音樂（不自動播放） -->
+<audio id="bgMusic" src="/audio/happy.mp4"></audio>
+<audio id="music" src="/audio/duck_happy.mp3"></audio>
+
+<!-- 煙火畫布 -->
+<!--
+<canvas id="fireworks"></canvas>
+-->
+<script>
+let bgMusic;
+let myMusic;
+let btn;
+
+/* =========================
+   初始化（所有 DOM 集中管理）
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+
+    bgMusic = document.getElementById("bgMusic");
+    myMusic = document.getElementById("music");
+    btn = document.getElementById("musicBtn");
+
+    // BGM 狀態監聽
+    bgMusic.addEventListener("play", () => updateBGMIcon("playing"));
+    bgMusic.addEventListener("pause", () => updateBGMIcon("paused"));
+    bgMusic.addEventListener("ended", () => updateBGMIcon("ended"));
+
+    // 其他音樂播放 → 自動停 BGM（雙向互斥）
+    myMusic.addEventListener("play", () => {
+        bgMusic.pause();
+    });
+});
+
+/* =========================
+   🎧 BGM 控制
+========================= */
+function toggleBGM() {
+    if (!bgMusic) return;
+
+    if (bgMusic.ended) {
+        bgMusic.currentTime = 0;
+        bgMusic.play();
+        return;
+    }
+
+    bgMusic.paused ? bgMusic.play() : bgMusic.pause();
+}
+
+function updateBGMIcon(state) {
+    if (!btn) return;
+
+    if (state === "playing") btn.innerText = "🔊";
+    if (state === "paused") btn.innerText = "⏸";
+    if (state === "ended") btn.innerText = "🔁";
+}
+
+/* =========================
+   🎵 其他音樂
+========================= */
+function playMusic() {
+    if (!myMusic) myMusic = document.getElementById("music");
+
+    // 👉 自動暫停 BGM（避免打架）
+    if (bgMusic) bgMusic.pause();
+
+    if (myMusic.paused) {
+        myMusic.play().catch(() => {});
+    } else {
+        myMusic.pause();
+    }
+}
+/* ===== 開信封 ===== */
+function openEnvelope() {
+    let card = document.getElementById("card");
+    let btnopen = document.querySelector(".btn-open");
+    // 👉 播放音樂（只會播一次）
+    let music = document.getElementById("bgMusic");
+
+    music.currentTime = 0; // 從頭開始
+    music.play().catch(() => {}); // 防止手機報錯
+    setTimeout(() => {
+        btnopen.style.display = "none";
+        /*
+        env.style.display = "none";
+        card.style.backgroundImage = "url('/images/card-bg.png')";
+        */
+        card.style.display = "flex";
+        card.style.backgroundImage = "url('/images/card-bg.png')"; // 換開啟圖
+        setTimeout(() => {
+            card.classList.add("show");
+            showStory();
+            /*
+            startFireworks();
+            */
+        }, 100);
+
+    }, 800);
+}
+
+/* ===== 故事（分段打字） ===== */
+async function showStory() {
+    await type("鐵鐵，緣分短暫");
+    document.getElementById("text").innerHTML += "<br>";
+    await sleep(800);
+
+    await type("此時此刻，只想祝妳");
+    document.getElementById("text").innerHTML += "<br>";
+    await sleep(800);
+
+    await type("平平安安、健健康康");
+    document.getElementById("text").innerHTML += "<br>";
+    await sleep(800);
+
+    document.getElementById("text").innerHTML += '<div class="big">生日快樂 🎂✨</div>';
+    document.querySelector(".btn-group").classList.add("show");
+}
+
+/* 打字 */
+function type(text) {
+    return new Promise(resolve => {
+        let i = 0;
+        let target = document.getElementById("text");
+
+        function typing() {
+            if (i < text.length) {
+                target.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(typing, 70);
+            } else resolve();
+        }
+        typing();
+    });
+}
+
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
+
+
+/* 跳頁 */
+function goDuck() {
+    window.location.href = "/duck.html";
+}
+
+
+
+
+</script>
+
+</body>
+</html>

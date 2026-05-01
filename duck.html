@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打鴨遊戲 🦆</title>
+
+<style>
+
+h1 {
+    font-size: 6vw;
+}
+
+h2 {
+    font-size: 5vw;
+}
+
+body {
+    text-align: center;
+    background: #e6f7ff;
+}
+
+/* 鴨 */
+#duck {
+    width: 30vw;/* 手機會縮小 */
+    max-width: 200px;
+    position: absolute;
+    left: 40%;
+    top: 40%;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    cursor: url('/images/hammer.png'), auto;
+}
+
+#duck:hover {
+    transform: scale(1.05);
+    cursor: url('/images/hammer.png'), auto;
+}
+
+
+/* 震動 */
+.shake {
+    animation: shake 0.2s;
+}
+
+@keyframes shake {
+    0% { transform: translate(5px); }
+    50% { transform: translate(-5px); }
+    100% { transform: translate(5px); }
+}
+
+/* 彈出動畫 */
+@keyframes pop {
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 分數字體 */
+.big {
+    font-size: 40px;
+    color: red;
+}
+
+#result {
+    display: none;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0;
+    text-align: center;
+    transition: all 0.4s ease;
+}
+
+#result h2 {
+    text-align: center;
+    margin-bottom:0;
+    
+}
+
+.result-duck {
+    text-align: left;
+    position: relative;
+    display: inline-block;
+}
+
+#resultDuck {
+    width: 100%;
+}
+
+.result-text {
+    position: absolute;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+
+    color: black;
+    text-shadow: 2px 2px 6px black;
+    text-align: left;
+    font-size: clamp(10px, 3vw, 26px);
+}
+
+
+#hammer {
+    position: absolute;
+    width: 80px;
+    pointer-events: none; /* 不影響點擊 */
+
+    display: none;
+    transform: translate(-50%, -50%);
+}
+
+#result.show {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.3);
+}
+
+#duck, h1, h2 {
+    
+    transition: opacity 0.3s ease;
+}
+/* 按鈕 */
+button {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+.btn-group {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 10px;
+
+    opacity: 0;
+    transition: all 0.5s ease;
+
+    pointer-events: none;
+
+}
+
+.btn-group button {
+    background: none;   /* ⭐ 移除灰底 */
+    border: none;       /* ⭐ 移除邊框 */
+    padding: 0;         /* ⭐ 移除內距 */
+    margin: 0;          /* ⭐ 防止外距影響 */
+    cursor: pointer;
+    outline: none;
+    
+}
+
+button img {
+    width: clamp(80px, 20vw, 150px);
+    display: block;
+    border-radius: 12px;
+
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+    transition: all 0.2s ease;
+
+}
+
+.btn-group button:hover {
+    transform: scale(1.08);
+    filter: drop-shadow(0 6px 15px rgba(0,0,0,0.5));
+}
+
+.btn-group button:active img {
+    transform: scale(0.95);
+}
+
+.btn-group.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+</style>
+</head>
+
+<body ontouchstart="">
+
+<div id="basic">
+    <button onclick="duckBGM()" id="musicBtn">🔊</button>
+    <h2>剩餘時間：<span id="time">10</span> 秒</h2>
+    <h2>分數：<span id="score">0</span></h2>
+    <img id="duck" src="/images/duck.png" onclick="hitDuck()">
+</div>
+<audio id="hitSound" src="/audio/duck.mp3"></audio>
+<!-- ⭐⭐ 加在這裡（body 最後）⭐⭐ -->
+    <div id="result">
+        <h2>GAME Over</h2>
+        <!-- ⭐ 鴨子區 -->
+        <div class="result-duck">
+            <img id="resultDuck" src="/images/duck-cry.png">
+            <div class="result-text">
+                <div><span id="finalName"></span></div>
+                <div>分數：<span id="finalScore"></span></div>
+                <div>級別：<span id="finalRank"></span></div>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button onclick="restartGame()">
+                <img src="/images/keep-hit.png">
+            </button>
+            <button onclick="goHome()">
+                <img src="/images/no-hit.png">
+            </button>
+        </div>
+    </div>
+    <audio id="duckBGM" src="/audio/hit_duck_bgm.mp4" loop></audio>
+
+
+<script>
+let duckMusic;
+let musicBtn;
+
+let score = 0;
+let time = 10;
+let gameStarted = false;
+let gameOver = false;
+let timer = null;
+
+/* =========================
+   初始化（安全版）
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+
+    duckMusic = document.getElementById("duckBGM");
+    musicBtn = document.getElementById("musicBtn");
+
+    /* ===== 音樂保護（避免炸整頁） ===== */
+    if (duckMusic) {
+        duckMusic.play().then(() => {
+            updateIcon("playing");
+        }).catch(() => {
+            updateIcon("paused");
+        });
+
+        duckMusic.addEventListener("play", () => updateIcon("playing"));
+        duckMusic.addEventListener("pause", () => updateIcon("paused"));
+    }
+
+    /* ===== 遊戲開始（比 body click 穩） ===== */
+    document.body.addEventListener("click", startGame, { once: true });
+});
+
+
+/* =========================
+   🎧 音樂控制
+========================= */
+function duckBGM() {
+    if (!duckMusic) return;
+
+    if (duckMusic.paused) {
+        duckMusic.play().catch(() => {});
+        updateIcon("playing");
+    } else {
+        duckMusic.pause();
+        updateIcon("paused");
+    }
+}
+
+/* emoji */
+function updateIcon(state) {
+    if (!musicBtn) return;
+
+    if (state === "playing") musicBtn.innerText = "🔊";
+    if (state === "paused") musicBtn.innerText = "⏸";
+}
+
+
+/* =========================
+   ⏱️ 計時系統（穩定版）
+========================= */
+function startGame() {
+    if (gameStarted) return;
+
+    gameStarted = true;
+
+    timer = setInterval(() => {
+
+        if (gameOver) return;
+
+        time--;
+        let timeEl = document.getElementById("time");
+
+        if (timeEl) {
+            timeEl.innerText = time;
+        }
+
+        if (time <= 0) {
+            endGame();
+        }
+
+    }, 1000);
+}
+
+
+/* =========================
+   🛑 結束遊戲
+========================= */
+function endGame() {
+    if (gameOver) return;
+
+    gameOver = true;
+    clearInterval(timer);
+
+    document.getElementById("duck").onclick = null;
+    document.getElementById("duck").style.display = "none";
+    document.getElementById("basic").style.display = "none";
+
+    // ⭐ 不動音樂（刻意保留）
+    // duckMusic.pause(); ← 不要寫這行
+
+    showResult();
+}
+
+
+/* =========================
+   🎯 打鴨
+========================= */
+function hitDuck() {
+
+    if (navigator.vibrate) {
+        navigator.vibrate(100);
+    }
+
+    let duck = document.getElementById("duck");
+
+    let hitSound = document.getElementById("hitSound");
+    if (hitSound) {
+        hitSound.play().catch(() => {});
+    }
+
+    score++;
+    let scoreEl = document.getElementById("score");
+    if (scoreEl) {
+        scoreEl.innerText = score;
+    }
+
+    updateDuckImage();
+
+    if (duck) {
+        duck.style.left = Math.random() * 70 + "%";
+        duck.style.top = Math.random() * 70 + "%";
+    }
+
+    document.body.classList.add("shake");
+    setTimeout(() => document.body.classList.remove("shake"), 200);
+}
+
+
+/* =========================
+   🖼️ 鴨子變化
+========================= */
+function updateDuckImage() {
+    let duck = document.getElementById("duck");
+    if (!duck) return;
+
+    if (score < 5) duck.src = "/images/duck.png";
+    else if (score < 10) duck.src = "/images/duck1.png";
+    else if (score < 15) duck.src = "/images/duck2.png";
+    else duck.src = "/images/duck3.png";
+}
+
+
+/* =========================
+   🏁 結算
+========================= */
+function showResult() {
+
+    let scoreEl = document.getElementById("finalScore");
+    let rankEl = document.getElementById("finalRank");
+    let nameEl = document.getElementById("finalName");
+
+    if (scoreEl) scoreEl.innerText = score;
+    if (rankEl) rankEl.innerText = getRank(score);
+    if (nameEl) nameEl.innerText = getName(score);
+
+    let result = document.getElementById("result");
+    if (result) result.classList.add("show");
+
+    let btnGroup = document.querySelector(".btn-group");
+    if (btnGroup) btnGroup.classList.add("show");
+}
+
+
+/* =========================
+   🔁 再玩 / 回首頁
+========================= */
+function restartGame() {
+    location.reload();
+}
+
+function goHome() {
+    window.location.href = "/";
+}
+
+
+/* =========================
+   🏅 分數系統
+========================= */
+function getRank(score) {
+    if (score >= 20) return "S級";
+    if (score >= 15) return "A級";
+    if (score >= 10) return "B級";
+    if (score >= 5) return "C級";
+    return "D級";
+}
+
+function getName(score) {
+    if (score >= 20) return "傳說獵鴨王";
+    if (score >= 15) return "鴨滾了";
+    if (score >= 10) return "鴨趴了";
+    if (score >= 5) return "鴨飛了";
+    return "鴨看不起你";
+}
+
+</script>
+
+</body>
+</html>

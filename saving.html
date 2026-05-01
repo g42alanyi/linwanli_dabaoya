@@ -1,0 +1,177 @@
+<script>
+let duckMusic;
+let musicBtn;
+
+/* ===== 初始化 ===== */
+document.addEventListener("DOMContentLoaded", () => {
+    duckMusic = document.getElementById("duckBGM");
+    musicBtn = document.getElementById("musicBtn");
+
+    // ⭐ 進頁自動播放（瀏覽器允許才會成功）
+    duckMusic.play().catch(() => {
+        updateIcon("paused");
+    });
+
+    updateIcon("playing");
+
+    // 狀態監聽
+    duckMusic.addEventListener("play", () => updateIcon("playing"));
+    duckMusic.addEventListener("pause", () => updateIcon("paused"));
+});
+
+/* ===== BGM 切換 ===== */
+function duckBGM() {
+    if (!duckMusic) return;
+
+    if (duckMusic.paused) {
+        duckMusic.play();
+        updateIcon("playing");
+    } else {
+        duckMusic.pause();
+        updateIcon("paused");
+    }
+}
+
+/* ===== emoji 更新 ===== */
+function updateIcon(state) {
+    if (!musicBtn) return;
+
+    if (state === "playing") musicBtn.innerText = "🔊";
+    if (state === "paused") musicBtn.innerText = "⏸";
+}
+
+let score = 0;
+let time = 10;
+let isCrying = false;
+
+/* ===== 計時 ===== */
+let gameStarted = false;
+let gameOver = false;
+let timer = null;
+
+
+document.body.addEventListener("click", startGame, { once: true });
+/*
+document.body.addEventListener("click", () => {
+    if (duckMusic && duckMusic.paused) {
+        duckMusic.play().catch(() => {});
+    }
+}, { once: true });
+*/
+function startGame() {
+    if (gameStarted) return;
+
+    gameStarted = true;
+
+    timer = setInterval(() => {
+        if (gameOver) return;
+
+        time--;
+        document.getElementById("time").innerText = time;
+
+        if (time <= 0) {
+            endGame();
+        }
+    }, 1000);
+}
+
+function endGame() {
+    if (gameOver) return;
+
+    gameOver = true;
+
+    clearInterval(timer);
+
+    // ❗鎖住鴨子點擊
+    document.getElementById("duck").onclick = null;
+    document.getElementById("duck").style.display = "none";
+    document.getElementById("basic").style.display = "none";
+    // ❗顯示結果
+    showResult();
+}
+
+
+/* ===== 打鴨 ===== */
+function hitDuck() {
+    
+     /* 震動（放這裡最合理） */
+    if (navigator.vibrate) {
+        navigator.vibrate(100);
+    }
+
+    let duck = document.getElementById("duck");
+
+    /* 播音效 */
+    document.getElementById("hitSound").play();
+
+    /* 分數 */
+    score++;
+    document.getElementById("score").innerText = score;
+    updateDuckImage(); // ⭐ 加這行
+    
+    /* 隨機位置 */
+    duck.style.left = Math.random() * 70 + "%";
+    duck.style.top = Math.random() * 70 + "%";
+
+    /* 畫面震動 */
+    document.body.classList.add("shake");
+    setTimeout(() => document.body.classList.remove("shake"), 200);
+}
+
+/* ===== 顯示結算 ===== */
+function showResult() {
+    document.getElementById("finalScore").innerText = score;
+    document.getElementById("finalRank").innerText = getRank(score);
+    document.getElementById("finalName").innerText = getName(score);
+
+    let result = document.getElementById("result");
+    result.classList.add("show");
+    document.querySelector(".btn-group").classList.add("show");
+}
+
+/* 再玩一次 */
+function restartGame() {
+    location.reload(); // 重新整理
+}
+
+/* 回首頁 */
+function goHome() {
+    window.location.href = "/";
+}
+
+function updateDuckImage() {
+
+    let duck = document.getElementById("duck");
+    
+
+    if (score < 5) {
+        duck.src = "/images/duck.png";
+    } 
+    else if (score < 10) {
+        duck.src = "/images/duck1.png";
+    } 
+    else if (score < 15) {
+        duck.src = "/images/duck2.png";
+    } 
+    else {
+        duck.src = "/images/duck3.png";
+    }
+}
+
+function getRank(score) {
+    if (score >= 20) return "S級";
+    if (score >= 15) return "A級";
+    if (score >= 10) return "B級";
+    if (score >= 5)  return "C級";
+    return "D級";
+}
+
+function getName(score) {
+    if (score >= 20) return "傳說獵鴨王";
+    if (score >= 15) return "鴨滾了";
+    if (score >= 10) return "鴨趴了";
+    if (score >= 5)  return "鴨飛了";
+    return "鴨看不起你";
+}
+
+</script>
