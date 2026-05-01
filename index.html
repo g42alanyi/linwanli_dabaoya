@@ -12,7 +12,7 @@
 /* 定義字體 */
 @font-face {
     font-family: 'azuki'; /* 你自己取名字 */
-    src: url('/fonts/azuki.ttf') format('truetype');
+    src: url('fonts/azuki.ttf') format('truetype');
 }
 /* ===== 背景 ===== */
 body {
@@ -264,8 +264,8 @@ canvas {
 </div>
 
 <!-- 音樂（不自動播放） -->
-<audio id="bgMusic" src="/audio/happy.mp4"></audio>
-<audio id="music" src="/audio/duck_happy.mp3"></audio>
+<audio id="bgMusic" src="audio/happy.mp4"></audio>
+<audio id="music" src="audio/duck_happy.mp3"></audio>
 
 <!-- 煙火畫布 -->
 <!--
@@ -347,10 +347,10 @@ function openEnvelope() {
         btnopen.style.display = "none";
         /*
         env.style.display = "none";
-        card.style.backgroundImage = "url('/images/card-bg.png')";
+        card.style.backgroundImage = "url('images/card-bg.png')";
         */
         card.style.display = "flex";
-        card.style.backgroundImage = "url('/images/card-bg.png')"; // 換開啟圖
+        card.style.backgroundImage = "url('images/card-bg.png')"; // 換開啟圖
         setTimeout(() => {
             card.classList.add("show");
             showStory();
@@ -404,7 +404,7 @@ function sleep(ms) {
 
 /* 跳頁 */
 function goDuck() {
-    window.location.href = "/duck.html";
+    window.location.href = "duck.html";
 }
 
 
