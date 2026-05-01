@@ -29,12 +29,12 @@ body {
     top: 40%;
     cursor: pointer;
     transition: all 0.5s ease;
-    cursor: url('/images/hammer.png'), auto;
+    cursor: url('images/hammer.png'), auto;
 }
 
 #duck:hover {
     transform: scale(1.05);
-    cursor: url('/images/hammer.png'), auto;
+    cursor: url('images/hammer.png'), auto;
 }
 
 
@@ -192,15 +192,15 @@ button img {
     <button onclick="duckBGM()" id="musicBtn">🔊</button>
     <h2>剩餘時間：<span id="time">10</span> 秒</h2>
     <h2>分數：<span id="score">0</span></h2>
-    <img id="duck" src="/images/duck.png" onclick="hitDuck()">
+    <img id="duck" src="images/duck.png" onclick="hitDuck()">
 </div>
-<audio id="hitSound" src="/audio/duck.mp3"></audio>
+<audio id="hitSound" src="audio/duck.mp3"></audio>
 <!-- ⭐⭐ 加在這裡（body 最後）⭐⭐ -->
     <div id="result">
         <h2>GAME Over</h2>
         <!-- ⭐ 鴨子區 -->
         <div class="result-duck">
-            <img id="resultDuck" src="/images/duck-cry.png">
+            <img id="resultDuck" src="images/duck-cry.png">
             <div class="result-text">
                 <div><span id="finalName"></span></div>
                 <div>分數：<span id="finalScore"></span></div>
@@ -209,14 +209,14 @@ button img {
         </div>
         <div class="btn-group">
             <button onclick="restartGame()">
-                <img src="/images/keep-hit.png">
+                <img src="images/keep-hit.png">
             </button>
             <button onclick="goHome()">
-                <img src="/images/no-hit.png">
+                <img src="images/no-hit.png">
             </button>
         </div>
     </div>
-    <audio id="duckBGM" src="/audio/hit_duck_bgm.mp4" loop></audio>
+    <audio id="duckBGM" src="audio/hit_duck_bgm.mp4" loop></audio>
 
 
 <script>
@@ -285,6 +285,10 @@ function startGame() {
     if (gameStarted) return;
 
     gameStarted = true;
+
+    if (duckMusic) {
+        duckMusic.play().catch(() => {});
+    }
 
     timer = setInterval(() => {
 
@@ -366,10 +370,10 @@ function updateDuckImage() {
     let duck = document.getElementById("duck");
     if (!duck) return;
 
-    if (score < 5) duck.src = "/images/duck.png";
-    else if (score < 10) duck.src = "/images/duck1.png";
-    else if (score < 15) duck.src = "/images/duck2.png";
-    else duck.src = "/images/duck3.png";
+    if (score < 5) duck.src = "images/duck.png";
+    else if (score < 10) duck.src = "images/duck1.png";
+    else if (score < 15) duck.src = "images/duck2.png";
+    else duck.src = "images/duck3.png";
 }
 
 
@@ -402,7 +406,7 @@ function restartGame() {
 }
 
 function goHome() {
-    window.location.href = "/";
+    window.location.href = "index.html";
 }
 
 
